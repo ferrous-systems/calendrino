@@ -9,12 +9,12 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -256,7 +256,7 @@ def render_caldata_html(data):
 						ret += "<div class='calitem timed %s'%s><div class='caltime'>%s</div>%s</div>" % (item['calsrcclass'], ttl, timestr, item['summary'])
 					return ret
 
-				outfp.write(ExtendedHTMLCalendar().formatmonth(callback, y, m).encode("utf-8"))
+				outfp.write(ExtendedHTMLCalendar().formatyear(callback, y).encode("utf-8"))
 
 		outfp.write(htmltemplate[1].replace("{{renderdate}}", renderdate).encode("utf-8"))
 
@@ -336,4 +336,3 @@ if __name__=='__main__':
 			del data
 
 		sleep(config['sleepdur'])
-

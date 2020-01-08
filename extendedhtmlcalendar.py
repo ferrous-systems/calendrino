@@ -9,16 +9,17 @@ class ExtendedHTMLCalendar(HTMLCalendar):
 		Return a day as a table cell.
 		"""
 		if day == 0:
-			return '<td class="noday">&nbsp;</td>' # day outside month
+			return '<tr><td class="noday">&nbsp;</td></tr>\n' # day outside month
 		else:
-			return '<td class="%s">%d%s</td>' % (self.cssclasses[weekday], day, callback(day))
+			return '<tr><td class="%s">%d%s</td></tr>\n' % (self.cssclasses[weekday], day, callback(day))
 
 	def formatweek(self, callback, theweek):
 		"""
 		Return a complete week as a table row.
 		"""
 		s = ''.join(self.formatday(callback, d, wd) for (d, wd) in theweek)
-		return '<tr>%s</tr>' % s
+		return 'hekk%s' % s
+
 
 	def formatmonth(self, callback, theyear, themonth, withyear=True):
 		"""
@@ -30,8 +31,6 @@ class ExtendedHTMLCalendar(HTMLCalendar):
 		a('\n')
 		a(self.formatmonthname(theyear, themonth, withyear=withyear))
 		a('\n')
-		a(self.formatweekheader())
-		a('\n')
 		for week in self.monthdays2calendar(theyear, themonth):
 			a(self.formatweek(callback, week))
 			a('\n')
@@ -39,6 +38,25 @@ class ExtendedHTMLCalendar(HTMLCalendar):
 		a('\n')
 		return ''.join(v)
 
-	def formatyear(self, theyear, width=3):
-		raise NotImplementedError() # since we'd want to add the extensions there too
-
+	def formatyear(self, callback, theyear, width=12):
+		"""
+		Return a formatted year as a table of tables.
+		"""
+		v = []
+		a = v.append
+		width = max(width, 1)
+		a('<table border="0" cellpadding="0" cellspacing="0" class="year">')
+		a('\n')
+		a('<tr><th colspan="%d" class="year">%s</th></tr>' % (
+			width, theyear))
+		for i in range(1, 1+12, width):
+			# months in this row
+			months = range(i, min(i+width, 13))
+			a('<tr>')
+			for m in months:
+				a('<td>')
+				a(self.formatmonth(callback, theyear, m, withyear=True))
+				a('</td>')
+			a('</tr>')
+		a('</table>')
+		return ''.join(v)
