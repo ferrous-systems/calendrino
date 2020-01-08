@@ -18,7 +18,7 @@ class ExtendedHTMLCalendar(HTMLCalendar):
 		Return a complete week as a table row.
 		"""
 		s = ''.join(self.formatday(callback, d, wd) for (d, wd) in theweek)
-		return 'hekk%s' % s
+		return '%s' % s
 
 
 	def formatmonth(self, callback, theyear, themonth, withyear=True):
@@ -27,6 +27,7 @@ class ExtendedHTMLCalendar(HTMLCalendar):
 		"""
 		v = []
 		a = v.append
+		a('<td>')
 		a('<table border="1" cellpadding="0" cellspacing="0" class="month">')
 		a('\n')
 		a(self.formatmonthname(theyear, themonth, withyear=withyear))
@@ -35,6 +36,7 @@ class ExtendedHTMLCalendar(HTMLCalendar):
 			a(self.formatweek(callback, week))
 			a('\n')
 		a('</table>')
+		a('</td>')
 		a('\n')
 		return ''.join(v)
 

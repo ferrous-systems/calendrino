@@ -256,7 +256,7 @@ def render_caldata_html(data):
 						ret += "<div class='calitem timed %s'%s><div class='caltime'>%s</div>%s</div>" % (item['calsrcclass'], ttl, timestr, item['summary'])
 					return ret
 
-				outfp.write(ExtendedHTMLCalendar().formatyear(callback, y).encode("utf-8"))
+				outfp.write(ExtendedHTMLCalendar().formatmonth(callback, y, m).encode("utf-8"))
 
 		outfp.write(htmltemplate[1].replace("{{renderdate}}", renderdate).encode("utf-8"))
 
