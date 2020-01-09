@@ -256,7 +256,7 @@ def render_caldata_html(data):
 						ret += "<div class='calitem timed %s'%s><div class='caltime'>%s</div>%s</div>" % (item['calsrcclass'], ttl, timestr, item['summary'])
 					return ret
 
-				outfp.write(ExtendedHTMLCalendar().formatmonth(callback, y, m).encode("utf-8"))
+				outfp.write(ExtendedHTMLCalendar().formatmonthleft(callback, y, m).encode("utf-8"))
 
 		outfp.write(htmltemplate[1].replace("{{renderdate}}", renderdate).encode("utf-8"))
 
@@ -289,8 +289,10 @@ if __name__=='__main__':
 			percaldata = {k:{} for k in ical_input_files}
 
 			# decide the lowest and highest date we'll care about
-			startdate = today - timedelta(days = config['view_days_before'])
-			enddate   = today + timedelta(days = config['view_days_after'])
+			startdate = date(2020, 1, 1)
+			enddate   = date(2021, 12, 31)
+			# startdate = today - timedelta(days = config['view_days_before'])
+			# enddate   = today + timedelta(days = config['view_days_after'])
 
 
 		# Loop over the cal source files, deciding whether they need a full re-parse or not

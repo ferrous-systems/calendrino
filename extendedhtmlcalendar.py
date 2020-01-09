@@ -1,5 +1,7 @@
 
-from calendar import HTMLCalendar
+from calendar import HTMLCalendar, _localized_month
+
+month_name = _localized_month('%B')
 
 class ExtendedHTMLCalendar(HTMLCalendar):
 	"Just like HTMLCalendar except the rendering sub-functions pass around a callback which will be used to render additional info in each day"
@@ -8,57 +10,117 @@ class ExtendedHTMLCalendar(HTMLCalendar):
 		"""
 		Return a day as a table cell.
 		"""
-		if day == 0:
-			return '<tr><td class="noday">&nbsp;</td></tr>\n' # day outside month
-		else:
-			return '<tr><td class="%s">%d%s</td></tr>\n' % (self.cssclasses[weekday], day, callback(day))
 
-	def formatweek(self, callback, theweek):
-		"""
-		Return a complete week as a table row.
-		"""
-		s = ''.join(self.formatday(callback, d, wd) for (d, wd) in theweek)
-		return '%s' % s
+		return '<td class="%s">%d%s</td>\n' % (self.cssclasses[weekday], day, callback(day))
 
-
-	def formatmonth(self, callback, theyear, themonth, withyear=True):
+	def formatmonth(self, callback, theyear, themonth, withyear=False):
 		"""
-		Return a formatted month as a table.
+		Return a formatted month as a table, top down
 		"""
 		v = []
 		a = v.append
 		a('<td>')
+		a('\n')
 		a('<table border="1" cellpadding="0" cellspacing="0" class="month">')
 		a('\n')
 		a(self.formatmonthname(theyear, themonth, withyear=withyear))
 		a('\n')
-		for week in self.monthdays2calendar(theyear, themonth):
-			a(self.formatweek(callback, week))
-			a('\n')
+		daycounter = 0
+		for day in self.itermonthdays2(theyear, themonth):
+
+			if day[0] == 31:
+				a('<tr>')
+				a(self.formatday(callback, day[0], day[1]))
+				a('</tr>')
+				a('\n')
+				daycounter = 0
+				break
+			elif day[0] == 0 and daycounter == 0 :
+				continue
+			elif day[0] == 0 and daycounter == 28 :
+				a('<tr><td class="noday">&nbsp;</td></tr>\n')
+				a('<tr><td class="noday">&nbsp;</td></tr>\n')
+				a('<tr><td class="noday">&nbsp;</td></tr>\n')
+				a('\n')
+				daycounter = 0
+				break
+			elif day[0] == 0 and daycounter == 29 :
+				a('<tr><td class="noday">&nbsp;</td></tr>\n')
+				a('<tr><td class="noday">&nbsp;</td></tr>\n')
+				a('\n')
+				daycounter = 0
+				break
+			elif day[0] == 0 and daycounter == 30 :
+				a('<tr><td class="noday">&nbsp;</td></tr>\n')
+				a('\n')
+				daycounter = 0
+				break
+			else:
+				a('<tr>')
+				a(self.formatday(callback, day[0], day[1]))
+				a('</tr>')
+				a('\n')
+				daycounter += 1
 		a('</table>')
+		a('\n')
 		a('</td>')
 		a('\n')
 		return ''.join(v)
 
-	def formatyear(self, callback, theyear, width=12):
+	def monthname(self, theyear, themonth, withyear=True):
 		"""
-		Return a formatted year as a table of tables.
+		Return a month name as a table row.
+		"""
+		if withyear:
+			s = '%s %s' % (month_name[themonth], theyear)
+		else:
+			s = '%s' % month_name[themonth]
+		return '<tr><th colspan="31" class="%s">%s</th></tr>' % (
+			self.cssclass_month_head, s)
+
+	def formatmonthleft(self, callback, theyear, themonth, withyear=False):
+		"""
+		Return a formatted month as a table, left right
 		"""
 		v = []
 		a = v.append
-		width = max(width, 1)
-		a('<table border="0" cellpadding="0" cellspacing="0" class="year">')
 		a('\n')
-		a('<tr><th colspan="%d" class="year">%s</th></tr>' % (
-			width, theyear))
-		for i in range(1, 1+12, width):
-			# months in this row
-			months = range(i, min(i+width, 13))
-			a('<tr>')
-			for m in months:
-				a('<td>')
-				a(self.formatmonth(callback, theyear, m, withyear=True))
-				a('</td>')
-			a('</tr>')
-		a('</table>')
+		a('\n')
+		a(self.monthname(theyear, themonth, withyear=withyear))
+		a('\n')
+		daycounter = 0
+		for day in self.itermonthdays2(theyear, themonth):
+
+			if day[0] == 31:
+				a(self.formatday(callback, day[0], day[1]))
+				a('\n')
+				daycounter = 0
+				break
+			elif day[0] == 0 and daycounter == 0 :
+				continue
+			elif day[0] == 0 and daycounter == 28 :
+				a('<td class="noday">&nbsp;</td>\n')
+				a('<td class="noday">&nbsp;</td>\n')
+				a('<td class="noday">&nbsp;</td>\n')
+				a('\n')
+				daycounter = 0
+				break
+			elif day[0] == 0 and daycounter == 29 :
+				a('<td class="noday">&nbsp;</td>\n')
+				a('<td class="noday">&nbsp;</td>\n')
+				a('\n')
+				daycounter = 0
+				break
+			elif day[0] == 0 and daycounter == 30 :
+				a('<td class="noday">&nbsp;</td>\n')
+				a('\n')
+				daycounter = 0
+				break
+			else:
+				a(self.formatday(callback, day[0], day[1]))
+				a('\n')
+				daycounter += 1
+		a('\n')
+		a('</tr>')
+		a('\n')
 		return ''.join(v)

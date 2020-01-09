@@ -1,8 +1,11 @@
-
+body {
+  font-family: 'Rubik', sans-serif;
+}
 
 table.month {
 border: 1px solid black;
 border-collapse: collapse;
+font-size: 12px;
 }
 
 table.month td, table.month th {
@@ -11,22 +14,19 @@ vertical-align: top;
 }
 table.month td {
 border-width: 1px 1px 1px 1px;
-height: 30px;
+height: 100px;
 }
-
 
 table.month td.sat, table.month td.sun {
 background-color: rgb(245, 245, 185);
 }
 
-
 table.month td a#today {
 display: inline-block;
 width: 80%;
-height: 2ex;
+height: 10ex;
 background-color: rgb(245, 245, 85);
 }
-
 
 table.month .calitem {
 display: block;
@@ -47,7 +47,6 @@ table.month .alldayseparator {
 display: block;
 height: 0.5ex;
 }
-
 
 
 table.month .calsrcqmul {
